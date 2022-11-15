@@ -3,6 +3,7 @@ import sys
 import exifread
 from datetime import datetime
 from dateutil.parser import parse
+from pathlib import Path
 
 
 def exif_dump(path_name):
@@ -36,45 +37,54 @@ def get_datetime(file_handle):
         2. Get other EXIF datetime
         3. Get datetime from file name
         4. Get datetime from file date
-        
     """   
-
 
     exif_tag_list = []
         
-    tags = exifread.process_file(file_handle, details=False)
     my_date_time = None
     my_date_time_str = ""
+    
+    # Find file name
+    filename = file_handle.name
+    basename = os.path.basename(filename)
+    
+    # Find file type
+    suf = Path(filename).suffix
 
-    # Go through EXIF tags
-    datetime_original_found = False
-    for tag in tags.keys():
-        if 'DateTime' in tag:
-            my_date_time_str = (tags[tag]).values
-            my_date_time = datetime.strptime(my_date_time_str,'%Y:%m:%d %H:%M:%S')
-            if 'DateTimeOriginal' in tag:                
-                # print('EXIF DateTimeOrginal: ',my_date_time_str)
-                
-                datetime_original_found = True            
-            else:                
-                print("EXIF Datetime: {t}",tag,my_date_time_str)
-                
-        if datetime_original_found:
-            break        
+    if suf in ['.jpg','.JPG','.tif','.TIF','.wav','.WAV','.jpeg','.JPEG','.tiff','.TIFF']:
+    # Go through EXIF tags, in the types above
+        tags = exifread.process_file(file_handle, details=False)
+        datetime_original_found = False
+        try:
+            for tag in tags.keys():
+                if 'DateTime' in tag:
+                    my_date_time_str = (tags[tag]).values
+                    my_date_time = datetime.strptime(my_date_time_str,'%Y:%m:%d %H:%M:%S')
+                    if 'DateTimeOriginal' in tag:                
+                        # print('EXIF DateTimeOrginal: ',my_date_time_str)
+                        
+                        datetime_original_found = True            
+                    else:
+                        pass
+                        # print("EXIF Datetime: {t}",tag,my_date_time_str)
+                        
+                if datetime_original_found:
+                    break
+        except Exception as e:
+            print("EXIF tags processing exception:",e)
 
     # No EXIF datetime found, try to find date in filename
     if my_date_time_str == "" :
         # print("No EXIF dateTime found")
         try:
-            filename = file_handle.name
-            basename = os.path.basename(filename)
             file_name_date = parse(
                 timestr=basename,
                 fuzzy_with_tokens=True)[0]
             # print("Time parsed from name:",file_name_date)
 
         except Exception as e:
-            print("Caught exception:",e)
+            pass
+            # print("Filename: Caught exception:",e)
 
 
     # No date in filename, then file properties time
@@ -85,15 +95,17 @@ def get_datetime(file_handle):
             # print("OS time formatted:", os_time_formatted)
             my_date_time_str = os_time_formatted
         except Exception as e:
-            print("Caught exception:",e)
-
+            print("Getctime: Caught exception:",e)
+            
+    if my_date_time_str == "" :
+        print('\tERROR: Photo date not found ')
     my_date_time = datetime.strptime(my_date_time_str,'%Y:%m:%d %H:%M:%S')
     return my_date_time
 
 def get_y_ym_dirname_from_datetime( dt ):
     year=dt.year
     month=dt.month
-    return "{:04d}\\{:04d}-{:02d}".format(year,year,month)
+    return "\\{:04d}\\{:04d}-{:02d}".format(year,year,month)
 
 
 def make_datetime(datestring): # date_obj = 

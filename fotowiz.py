@@ -16,6 +16,7 @@ print('Photo copy wizard by Antti Ketola 2022')
 
 import os
 import glob
+import shutil
 import easygui
 import pprint
 from pprint import pprint
@@ -49,25 +50,55 @@ else:
     print("Destination folder",dest_root)
 
 fotos_list = []
+dest_dir_set = set()
 datum = ""
 count = 0
 for filename in glob.iglob(source_path, recursive=True):        
     file=open(filename,'rb')
-    print('----')
-    print(file.name,"***")
+    # print('.',end="") # progress indication
+    # print(file.name,"***")
     datum=get_datetime(file)
     dest_dir = get_y_ym_dirname_from_datetime(datum)
-    #print(dir_name)
-    info=FotoInfo(source_path,datum,dest_root,dest_dir,os.path.basename(file.name))
+    dest_dir_set.add(dest_dir)
+    info=FotoInfo(filename,
+                  datum,
+                  dest_root,
+                  dest_dir,
+                  os.path.basename(file.name)
+                  )
     fotos_list.append(info)
     file.close()
     count = count+1
-    if count > 10:
-        break
+#    if count > 2:
+#        break
     
 print("Number of files to copy:", len(fotos_list))
-# pprint.pprint(files_to_copy)
+print('The files will be copied and directories created in ', dest_root)
 
 
+title = 'Start copying?'
+message = "Destination: root="+dest_root+"\n"
+message +="   following subdirs will be created:\n"
+for d in dest_dir_set:
+    message += d+'\n'
+go_copy = easygui.ccbox(message, title)
+
+if not go_copy:
+    print("Cancelled.")
+    exit
+
+# Create dirs
+for d in dest_dir_set:
+    os.makedirs(dest_root+d, exist_ok=True)
 
 
+# Copy photos
+print("Copying")
+copied_count=0
+for f in fotos_list:
+    shutil.copy2(f.source_path,f.full_dest_path)
+    copied_count = copied_count+1
+    print('.',end='')
+
+message = "Copying Finished!\n" + f"Copied {copied_count} of {count}"
+easygui.msgbox(msg=message)
