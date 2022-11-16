@@ -36,7 +36,7 @@ if source_dir is None:
 else:
     print("Source dir",source_dir)
 
-source_path = os.path.join(source_dir,'**\\*.*') # not NoneType!!
+source_path = os.path.join(source_dir,'**\\*.*') 
 print("Source_path",source_path)
 
 # Ask destination directory, where files are copied to
@@ -74,7 +74,6 @@ for filename in glob.iglob(source_path, recursive=True):
     
 print("Number of files to copy:", len(fotos_list))
 print('The files will be copied and directories created in ', dest_root)
-
 
 title = 'Start copying?'
 message = "Destination: root="+dest_root+"\n"

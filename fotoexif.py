@@ -10,22 +10,37 @@ def exif_dump(path_name):
     """ Open image file and print EXIF tags and their values
     """
     
-# Open image file for reading (must be in binary mode)
-    f = open(path_name, 'rb')
+    # Open image file for reading (must be in binary mode)
+    try:
+        f = open(path_name, 'rb')
 
-    # Return Exif tags
-    tags = exifread.process_file(f)
-    for tag in tags.keys():
-        if tag not in ('JPEGThumbnail',
-                       'TIFFThumbnail',
-                       'Filename',
-                       'EXIF MakerNote'):
-            print("Key: %s, Value: %s" % (tag, tags[tag]))
-    f.close()
+        # Return Exif tags
+        tags = exifread.process_file(f)
+        for tag in tags.keys():
+            if tag not in ('JPEGThumbnail',
+                           'TIFFThumbnail',
+                           'Filename',
+                           'EXIF MakerNote'):
+                print("Key: %s, Value: %s" % (tag, tags[tag]))
+    except Exeption as e:
+        print(f"exif_dump({path_name}) hit by exception {e}")
+                
+    finally:
+        f.close()
 
 
 def is_datetime_tag(tag):
-    """ try to find DateTime, as there are many kinds of tags"""
+    """
+    Try to find DateTime, as there are many kinds of tags
+
+    >>> is_datetime_tag("DateTimeOriginal")
+    True
+    >>> is_datetime_tag("DateBar")
+    False
+    >>> is_datetime_tag("FOO DateTimeBar Tag")
+    True
+
+    """
     return tag.find('DateTime') != -1
 
 
@@ -37,6 +52,31 @@ def get_datetime(file_handle):
         2. Get other EXIF datetime
         3. Get datetime from file name
         4. Get datetime from file date
+
+
+    >>> fhandle = open(r'.\test\assets\EXIFTEST1.JPG','rb')
+    >>> get_datetime(fhandle)
+    datetime.datetime(2022, 11, 16, 1, 2, 34)
+    >>> fhandle.close()
+    >>>
+
+    >>> fhandle = open(r'.\test\assets\EXIFTEST2.jpg','rb')
+    >>> get_datetime(fhandle)
+    datetime.datetime(2022, 11, 16, 1, 26, 18)
+    >>> fhandle.close()
+    >>>
+
+    >>> fhandle = open(r'.\test\assets\RED_IMAGE_20201023.jpg','rb')
+    >>> get_datetime(fhandle)
+    datetime.datetime(2020, 10, 23, 0, 0)
+    >>> fhandle.close()
+    >>>
+
+    >>> fhandle = open(r'.\test\assets\txt.txt','rb')
+    >>> get_datetime(fhandle)
+    datetime.datetime(2022, 11, 16, 1, 57, 55)
+    >>> fhandle.close()
+    >>>
     """   
 
     exif_tag_list = []
@@ -74,10 +114,10 @@ def get_datetime(file_handle):
             print("EXIF tags processing exception:",e)
 
     # No EXIF datetime found, try to find date in filename
-    if my_date_time_str == "" :
+    if my_date_time == None :
         # print("No EXIF dateTime found")
         try:
-            file_name_date = parse(
+            my_date_time = parse(
                 timestr=basename,
                 fuzzy_with_tokens=True)[0]
             # print("Time parsed from name:",file_name_date)
@@ -88,18 +128,19 @@ def get_datetime(file_handle):
 
 
     # No date in filename, then file properties time
-    if my_date_time_str == "" :    
+    if my_date_time == None :    
         try:
             os_time = os.path.getctime(file_handle.name)
             os_time_formatted = datetime.fromtimestamp(os_time).strftime('%Y:%m:%d %H:%M:%S')
             # print("OS time formatted:", os_time_formatted)
             my_date_time_str = os_time_formatted
+            my_date_time = datetime.strptime(my_date_time_str,'%Y:%m:%d %H:%M:%S')
         except Exception as e:
             print("Getctime: Caught exception:",e)
             
-    if my_date_time_str == "" :
+    if my_date_time == None :
         print('\tERROR: Photo date not found ')
-    my_date_time = datetime.strptime(my_date_time_str,'%Y:%m:%d %H:%M:%S')
+    
     return my_date_time
 
 def get_y_ym_dirname_from_datetime( dt ):
@@ -108,7 +149,16 @@ def get_y_ym_dirname_from_datetime( dt ):
     return "\\{:04d}\\{:04d}-{:02d}".format(year,year,month)
 
 
-def make_datetime(datestring): # date_obj = 
+def make_datetime(datestring):
+    """
+    A shorthand to make datetime object from date String
+
+    >>> dt=make_datetime('2022:11:16 01:02')
+    >>> dt
+    datetime.datetime(2022, 11, 16, 1, 2)
+
+    """
+    
     return parse(datestring)
 
 # datetime.strptime(datestring, '%Y:%m:%d %H:%M:%S')
