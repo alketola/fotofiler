@@ -1,7 +1,12 @@
 # fotoco.py
 Photo copy wizard written in Python
 
-I really missed good old photo import wizard, that arranges imported photos in a subdirectory structure like {year}/{year.4d}-{month.2d}. 
+Usage:
+python3 photoco.py
+
+Developed and tested on Python 3.9
+
+I wrote this because I really missed good old photo import wizard, that arranges imported photos in a subdirectory structure like {year}/{year.4d}-{month.2d}. 
 
 This kind of arrangement is very nice, if you use old-fashioned physical media like CDs, DVDs or small USB drives, which cannot contain the photo collection in one unit.
 Also, if you want make a USB stick to browse photos on your smart TV, in practise it may become clumsy to find last summer's photos in a flat collection of 9000 photos.
