@@ -17,8 +17,8 @@ By which date? Excellent question!!! The answer is not that simple. I decided (y
 
 1. EXIF DateTimeOriginal
 2. EXIF DateTime (any other DateTime, if the above wasn't available
-3. A date implied by file name, as detected by dateutil.parser
-4. Filesystem date that is given by os.path.getctime, that is sort of creation time.
+3. Filesystem date that is given by os.path.getctime or os.path.getmtime, whichever is older
+4. A date implied by file name, as detected by dateutil.parser
 
 The Script throws you a few windows, made with _easygui_
 
