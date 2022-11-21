@@ -103,7 +103,7 @@ def get_datetime(file_handle):
     # Find file type
     suf = Path(filename).suffix
 
-    if suf in ['.jpg','.JPG','.tif','.TIF','.wav','.WAV','.jpeg','.JPEG','.tiff','.TIFF']:
+    if suf in ['.jpg','.JPG','.tif','.TIF','.wav','.WAV','.jpeg','.JPEG','.tiff','.TIFF','.heif','.heic']:
     # Go through EXIF tags, in the types above
         tags = exifread.process_file(file_handle, details=False)
         datetime_original_found = False
