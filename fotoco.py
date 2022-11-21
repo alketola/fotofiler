@@ -1,10 +1,10 @@
 # Photo collection reordering wizard
 #
-# 1. Ask to select source directory
+# 1. Ask to select source folder
 # 2. Find files
 #       Find dates
 # 3. Calculate new paths and filenames
-# 4. Ask to select destination directory
+# 4. Ask to select destination folder
 # 5. Create destination tree
 # 6. Preview. OK=> continue, NOK=> Back
 # 7. Create command queue
@@ -31,7 +31,7 @@ from fotoexif import *
 def build_fotos_list(source_dir, recurse, dest_dir):
     """
     Searchs files from source dir, and create list of FotoInfo objects,
-    and a list of destination directories to be created.
+    and a list of destination folders to be created.
 
     >>> L, dirs = build_fotos_list("test/assets/EXIFTEST1.JPG",False,"test/assets")
     >>> len(L)
@@ -73,8 +73,8 @@ welcome_msg="""Hello and welcome to copy photo files!
                The files are then arranged to a tree, according to
                date.
 
-               The program makes directories of years,
-               and inside them, there will be subdirectories
+               The program makes folders of years,
+               and inside them, there will be subfolders
                for each month
 
                The file date is deduced from:
@@ -86,7 +86,7 @@ welcome_msg="""Hello and welcome to copy photo files!
             """
 easygui.msgbox(welcome_msg,"photoco.py by Antti Ketola 2022 version 1.0")
 
-# Ask source directory, from where files are copied
+# Ask source folder, from where files are copied
 source_dir = easygui.diropenbox(title="Please input source folder of photos")
 if source_dir is None:
     print("No source folder selected, exiting")
@@ -97,7 +97,7 @@ else:
 source_spec = os.path.join(source_dir,'**\\*.*') 
 print("Source_path",source_spec)
 
-# Ask destination directory, where files are copied to
+# Ask destination folder, where files are copied to
 dest_root = easygui.diropenbox(title="Please input destination folder of photos",
                                    default="C:\\")
 
@@ -124,23 +124,25 @@ else:
     dest_description = f"already has {len(dest_contents)} files:\n"
     for f in dest_contents:
         dest_description += f + '\n'
-print(f'The files will be copied and directories created in {dest_root}, which {dest_description}')
+print(f'The files will be copied and folders created in {dest_root}, which {dest_description}')
 
 title = 'Start copying?'
-message = "Destination: root="+dest_root+"\n"
+message = f'{len(fotos_list)} files will be copied to {len(dest_dir_set)} folders' 
+message += f'\nDestination root={dest_root} '
 
+max_shown = 10
 if dest_count > 0:
-    message += "It's not empty: there are the following files:\n"
-    for f in dest_contents[:6]:
+    message += "isn't empty \nThere are the following files or folders:\n"
+    for f in dest_contents[:max_shown]:
         message += f"\t{f}\n"
-    if dest_count > 5:
+    if dest_count > max_shown:
         message += "\t...and there's more \n"
 
-message += f"   {len(dest_dir_set)} subdirs will be created:\n"
+message += f"{len(dest_dir_set)} subfolders will be created (if non-existent):\n"
 for d in list(dest_dir_set)[:10]:
     message += "\t"+d+'\n'
 
-if len(dest_dir_set)>10:
+if len(dest_dir_set)>max_shown:
     message += "\t...and more"
 
 go_copy = easygui.ccbox(message, title)
@@ -150,7 +152,7 @@ if not go_copy:
     quit()
 
 # Create dirs
-print("Creating directories")
+print("Creating folders")
 for d in dest_dir_set:
     os.makedirs(dest_root+d, exist_ok=True)
 
@@ -162,8 +164,11 @@ for f in fotos_list:
     shutil.copy2(f.source_path,f.full_dest_path)
     copied_count = copied_count+1
     print('.',end='')
+    if copied_count % 79 == 0 :
+        print("",flush=True)
 
 message = "Copying Finished!\n" + f"Copied {copied_count} of {len(fotos_list)}"
+message += "\n\n\tClick OK to exit"
 easygui.msgbox(msg=message)
 
 # END
