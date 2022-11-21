@@ -1,5 +1,5 @@
 # fotoco.py
-Photo copy wizard written in Python
+**Photo copy wizard written in Python**
 
 Usage:
 python3 photoco.py
@@ -27,3 +27,5 @@ In the future, I hope to extend this to support some other directory structures 
 I hope this will provide a less irritating alternative to these wizards that come in system software.
 
 The first version is made and tested on Windows 10, and shall be developed and tested to works with Ubuntu-class linux as well.
+
+If you need a complete, stable tool that solves most of the EXIF and photo metadata related desires, please visit Phil Harvey's *exiftool* project at https://exiftool.org . I humbly give respect to that work.
