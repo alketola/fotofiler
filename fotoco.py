@@ -69,21 +69,22 @@ def build_fotos_list(source_dir, recurse, dest_dir):
 
 welcome_msg="""Hello and welcome to copy photo files!
 
-               All files are copied, anyway, from the source.
+               All files are copied, from the selected source.
                The files are then arranged to a tree, according to
                date.
 
-               The basic case makes directories of years,
-               and inside them, there are subdirectories
+               The program makes directories of years,
+               and inside them, there will be subdirectories
                for each month
 
                The file date is deduced from:
                1. EXIF DateTimeOriginal
                2. EXIF other DateTime
-               3. File name
-               4. File creation time (oldest date in file metadata)
+               3. File modification or creation time, whichever older
+               4. File name
+
             """
-easygui.msgbox(welcome_msg,"photoco.py by Antti Ketola 2022")
+easygui.msgbox(welcome_msg,"photoco.py by Antti Ketola 2022 version 1.0")
 
 # Ask source directory, from where files are copied
 source_dir = easygui.diropenbox(title="Please input source folder of photos")
@@ -116,18 +117,32 @@ fotos_list, dest_dir_set = build_fotos_list(source_spec,
     
 print("Number of files to copy:", len(fotos_list))
 dest_contents = os.listdir(dest_root)
-
-if len(dest_contents)==0:
+dest_count = len(dest_contents)
+if dest_count==0:
     dest_description = "is empty"
 else:
-    dest_description = f"already has {len(dest_contents)} files"
+    dest_description = f"already has {len(dest_contents)} files:\n"
+    for f in dest_contents:
+        dest_description += f + '\n'
 print(f'The files will be copied and directories created in {dest_root}, which {dest_description}')
 
 title = 'Start copying?'
 message = "Destination: root="+dest_root+"\n"
-message +="   following subdirs will be created:\n"
-for d in dest_dir_set:
-    message += d+'\n'
+
+if dest_count > 0:
+    message += "It's not empty: there are the following files:\n"
+    for f in dest_contents[:6]:
+        message += f"\t{f}\n"
+    if dest_count > 5:
+        message += "\t...and there's more \n"
+
+message += f"   {len(dest_dir_set)} subdirs will be created:\n"
+for d in list(dest_dir_set)[:10]:
+    message += "\t"+d+'\n'
+
+if len(dest_dir_set)>10:
+    message += "\t...and more"
+
 go_copy = easygui.ccbox(message, title)
 
 if not go_copy:

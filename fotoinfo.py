@@ -1,17 +1,36 @@
 class FotoInfo:
     """
     Collection of photo information
-        
-    """
 
+    """
+    
     
     def __init__(self, source_path, date, dest_root, dest_dir, filename):
+        """
+        Class constructor. Stores photo information.
+
+        >>> f=FotoInfo(r'C:/users',"12345678", r"D:/", "7", "1.txt")
+        >>> f.source_path
+        'C:/users'
+        >>> f.date
+        '12345678'
+        >>> f.dest_root
+        'D:/'
+        >>> f.dest_dir
+        '7'
+        >>> f.filename
+        '1.txt'
+        >>> f.full_dest_path
+        'D:/7/1.txt'
+        >>>
+            
+        """
         self.source_path = source_path
         self.date = date
         self.dest_root = dest_root
         self.dest_dir = dest_dir
-        self.filename = filename
-        self.full_dest_path = dest_root+dest_dir+'\\'+filename
+        self.filename = filename 
+        self.full_dest_path = dest_root+dest_dir+'/'+filename
 
 
     def set_exif_gps_coord(self,
@@ -64,3 +83,6 @@ class FotoInfo:
             return (0.0,0.0)
 
     
+if __name__ == '__main__':
+  import doctest
+  doctest.testmod()
