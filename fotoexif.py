@@ -33,7 +33,7 @@ def exif_dump(path_name):
 ##                           'Filename',
 ##                           'EXIF MakerNote'):
                 print("Key: %s, Value: %s" % (tag, tags[tag]))
-    except Exeption as e:
+    except Exception as e:
         print(f"exif_dump({path_name}) hit by exception {e}")
                 
     finally:
