@@ -175,7 +175,7 @@ def get_datetime(file_handle):
 def get_y_ym_dirname_from_datetime( dt ):
     year=dt.year
     month=dt.month
-    return "\\{:04d}\\{:04d}-{:02d}".format(year,year,month)
+    return "/{:04d}/{:04d}-{:02d}".format(year,year,month)
 
 
 def make_datetime(date_string):

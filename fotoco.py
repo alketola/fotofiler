@@ -1,5 +1,8 @@
 # Photo collection reordering wizard
 #
+# By Antti Ketola, 2022
+# In Colmenar VIejo, Spain
+#
 # 1. Ask to select source folder
 # 2. Find files
 #       Find dates
@@ -28,6 +31,8 @@ from fotoinfo import FotoInfo
 import fotoexif
 from fotoexif import *
 
+version = "1.0.0-1a"
+
 def build_fotos_list(source_dir, recurse, dest_dir):
     """
     Searchs files from source dir, and create list of FotoInfo objects,
@@ -41,7 +46,7 @@ def build_fotos_list(source_dir, recurse, dest_dir):
     >>> L[0].filename
     'EXIFTEST1.JPG'
     >>> dirs.pop()
-    '\\2022\\2022-11'
+    '/2022/2022-11'
     """
     foto_list = []
     dest_dir_set = set()                                         
@@ -67,7 +72,7 @@ def build_fotos_list(source_dir, recurse, dest_dir):
 
 # Begin!
 
-welcome_msg="""Hello and welcome to copy photo files!
+welcome_msg="""Welcome to copy photo files!
 
                All files are copied, from the selected source.
                The files are then arranged to a tree, according to
@@ -84,7 +89,7 @@ welcome_msg="""Hello and welcome to copy photo files!
                4. File name
 
             """
-easygui.msgbox(welcome_msg,"photoco.py by Antti Ketola 2022 version 1.0")
+easygui.msgbox(welcome_msg,"photoco.py by Antti Ketola 2022 version {version}")
 
 # Ask source folder, from where files are copied
 source_dir = easygui.diropenbox(title="Please input source folder of photos")
@@ -94,12 +99,12 @@ if source_dir is None:
 else:
     print("Source dir",source_dir)
 
-source_spec = os.path.join(source_dir,'**\\*.*') 
+source_spec = os.path.join(source_dir,'**/*.*') 
 print("Source_path",source_spec)
 
 # Ask destination folder, where files are copied to
 dest_root = easygui.diropenbox(title="Please input destination folder of photos",
-                                   default="C:\\")
+                                   default="C:/")
 
 if dest_root is None:
     print("No destination folder selected, exiting")
