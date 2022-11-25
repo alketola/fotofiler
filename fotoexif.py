@@ -6,20 +6,20 @@ from dateutil.parser import parse
 from pathlib import Path
 
 
-def exif_dump(path_name):
+def dump_exif(path_name):
     """ Open image file and print EXIF tags and their values
 
-    >>> exif_dump('./test/assets/EXIFTEST2.JPG')
+    >>> dump_exif('./test/assets/EXIFTEST2.JPG')
     Key: Image ExifOffset, Value: 26
     Key: EXIF DateTimeDigitized, Value: 2022:11:16 01:26:18
-    >>> exif_dump('./test/assets/EXIFTEST1.JPG')
+    >>> dump_exif('./test/assets/EXIFTEST1.JPG')
     Key: Image DateTime, Value: 2022:11:16 01:23:45
     Key: Image ExifOffset, Value: 58
     Key: EXIF DateTimeOriginal, Value: 2022:11:16 01:02:34
     Key: EXIF DateTimeDigitized, Value: 2022:11:16 01:20:48
-    >>> exif_dump('./test/assets/RED_IMAGE_20201023.jpg')    
+    >>> dump_exif('./test/assets/RED_IMAGE_20201023.jpg')    
     """
-    ##>>> exif_dump('./test/assets/txt.txt') yields nothing but error: File format not recognized.
+    ##>>> dump_exif('./test/assets/txt.txt') yields nothing but error: File format not recognized.
     
     # Open image file for reading (must be in binary mode)
     try:
@@ -34,7 +34,7 @@ def exif_dump(path_name):
 ##                           'EXIF MakerNote'):
                 print("Key: %s, Value: %s" % (tag, tags[tag]))
     except Exception as e:
-        print(f"exif_dump({path_name}) hit by exception {e}")
+        print(f"dump_exif({path_name}) hit by exception {e}")
                 
     finally:
         f.close()
@@ -193,13 +193,15 @@ def make_datetime(date_string):
 # datetime.strptime(datestring, '%Y:%m:%d %H:%M:%S')
 
 
-def exif_my_tags(file_handle):
-# Must provide open image file handle for reading (must be in binary mode)
-# f = open(path_name, 'rb')
-    exif_tag_list = []
+def extract_time_and_place_exif_tags(file_handle):
+    ''' Creates a list of E
+        Must provide open image file handle for reading (must be in binary mode)
+        # f = open(path_name, 'rb')
+    '''
+    __exif_tag_list = []
         
-    tags = exifread.process_file(file_handle, details=False)
-    for tag in tags.keys():
+    __tags = exifread.process_file(file_handle, details=False)
+    for tag in __tags.keys():
         if tag in ( 'GPS GPSLongitude',
                     'GPS GPSLatitudeRef',
                     'GPS GPSDate',
@@ -209,10 +211,10 @@ def exif_my_tags(file_handle):
                     'GPS GPSLatitude',
                     'Image GPSInfo'
                    ):
-            exif_tag_list.append((tag, tags[tag]))
-            # # print("Key: %s, Value: %s" % (tag, tags[tag]))
+            __exif_tag_list.append((tag, __tags[tag]))
+            # # print("Key: %s, Value: %s" % (tag, __tags[tag]))
                         
-    return dict(exif_tag_list)
+    return dict(__exif_tag_list)
             
 
 if __name__ == "__main__":

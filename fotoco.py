@@ -72,7 +72,7 @@ def build_fotos_list(source_dir, recurse, dest_dir):
 
 # Begin!
 
-welcome_msg="""Welcome to copy photo files!
+welcome_msg="""Welcome to copy photo and other files!
 
                All files are copied, from the selected source.
                The files are then arranged to a tree, according to
@@ -82,11 +82,14 @@ welcome_msg="""Welcome to copy photo files!
                and inside them, there will be subfolders
                for each month
 
-               The file date is deduced from:
+               Photos with EXIF data will have some analysis.
+               The photo file date is deduced from:
                1. EXIF DateTimeOriginal
                2. EXIF other DateTime
                3. File modification or creation time, whichever older
                4. File name
+
+               Other files go with the older filesystem date.
 
             """
 easygui.msgbox(welcome_msg,"photoco.py by Antti Ketola 2022 version {version}")
@@ -132,7 +135,7 @@ else:
 print(f'The files will be copied and folders created in {dest_root}, which {dest_description}')
 
 title = 'Start copying?'
-message = f'{len(fotos_list)} files will be copied to {len(dest_dir_set)} folders' 
+message = f'\ņ{len(fotos_list)} files will be copied to {len(dest_dir_set)} folders' 
 message += f'\nDestination root={dest_root} '
 
 max_shown = 10
