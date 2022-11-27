@@ -31,7 +31,7 @@ from fotoinfo import FotoInfo
 import fotoexif
 from fotoexif import *
 
-version = "1.0.0-1a"
+version = "0.1.0-alpha"
 
 def build_fotos_list(source_dir, recurse, dest_dir):
     """
