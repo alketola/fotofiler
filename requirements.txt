@@ -1,3 +1,5 @@
 python-dateutil==2.8.2
 pytz==2022.6
 six==1.16.0
+easygui==0.98.3
+exifread==3.0.0
