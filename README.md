@@ -1,5 +1,5 @@
-# fotoco.py
-**Photo copy wizard written in Python**
+# fotofiler
+**Photo filing utility written in Python**
 
 Usage:
 python3 cli.py
