@@ -20,12 +20,23 @@ By which date? Excellent question!!! The answer is not that simple. I decided (y
 3. Filesystem date that is given by os.path.getctime or os.path.getmtime, whichever is older
 4. A date implied by file name, as detected by dateutil.parser (file system date rarely fails, so this is mererly theoretical)
 
-The Script throws you a few windows, made with _easygui_; the progress is indicated in a _tkinter_ window;
+The app in wizard mode throws you a few windows, made with _easygui_; the progress is indicated in a _tkinter_ window.
+
+There will be command line options, to use this without GUI wizard.
+
+I'm thinking of new features:
+- Outputting the collected metadata to a table file (e.g. .csv), that can be further processed. 
+- for being able to run without large memory (everyone doesn't have a i7 with 16GB)
+- for being able to analyze in detail what's being done
+- for being able to modify the copying task
+- for finding events by timewise clustering 
+- find places by clustering coordinates
+- limiting output to certain dates and number of items
 
 In the future, I hope to extend this to support some other directory structures and schemes, and a possibility to intelligently rename files.
 
 I hope this will provide a less irritating alternative to these wizards that come in system software.
 
-The first version is made and tested on Windows 10, and shall be developed and tested to works with Ubuntu-class linux as well.
+The first version is made and tested on Windows 10, and will be developed and tested to work with Ubuntu-class linux as well.
 
 If you need a complete, stable tool that solves most of the EXIF and photo metadata related desires, please visit Phil Harvey's *exiftool* project at https://exiftool.org . I humbly give respect to that work.
