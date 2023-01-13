@@ -1,8 +1,8 @@
 from setuptools import setup
 
 setup(
-    name="fotocopy",
-    version="0.1.2-alpha",
+    name="fotofiler",
+    version="0.1.2-beta",
     description="Photo copy wizard in Python 3.9",
     packages=["fotocopy"],
     install_requires=["python-dateutil", # ==2.8.2
