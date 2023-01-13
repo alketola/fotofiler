@@ -2,7 +2,7 @@
 **Photo filing utility written in Python**
 
 Usage:
-python3 cli.py
+`python3 cli.py`
 
 Developed and tested on Python 3.9+
 
@@ -38,5 +38,7 @@ In the future, I hope to extend this to support some other directory structures 
 I hope this will provide a less irritating alternative to these wizards that come in system software.
 
 The first version is made and tested on Windows 10, and will be developed and tested to work with Ubuntu-class linux as well.
+
+A windows 10 .exe executable can be built by running `pyinstall --onefile cli.py` . I suggest copying the resulting `cli.exe` from `dist` to desktop and renaming it as *fotofiler.exe*
 
 If you need a complete, stable tool that solves most of the EXIF and photo metadata related desires, please visit Phil Harvey's *exiftool* project at https://exiftool.org . I humbly give respect to that work.
