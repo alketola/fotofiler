@@ -23,15 +23,18 @@ def build_fotos_list(progress_win, source_dir, recurse, dest_root):
     """
     foto_list = []
     dest_dir_set = set()
-    
-    progress_win._progressbar.configure(mode="indeterminate")
-    progress_win.set_status("Reading source directory")
-    progress_win._progressbar.start()
+    if progress_win:
+        progress_win._progressbar.configure(mode="indeterminate")
+        progress_win.set_status("Reading source directory")
+        progress_win._progressbar.start()
+
     globlist = list(glob.iglob(source_dir, recursive=recurse))
-    progress_win._progressbar.stop()
-    progress_win._progressbar.configure(mode="determinate")
-    progress_win.reset_progress()
-    progress_win.set_status("Collecting information")
+
+    if progress_win:
+        progress_win._progressbar.stop()
+        progress_win._progressbar.configure(mode="determinate")
+        progress_win.reset_progress()
+        progress_win.set_status("Collecting information")
  
 
     
@@ -39,11 +42,11 @@ def build_fotos_list(progress_win, source_dir, recurse, dest_root):
     nud = math.floor(filecount/100) + 1
     c = 0
     for filename in globlist:
-        if c % nud == 0:
-            progress_win.nudge()
+        if progress_win:
+            if c % nud == 0:
+                progress_win.nudge()
         file=open(filename,'rb')
-        # print('.',end="") # progress indication
-        # print(file.name,"***")
+
         datum=get_datetime(file)
         dest_dir = get_y_ym_dirname_from_datetime(datum)
         dest_dir_set.add(dest_dir)
@@ -56,6 +59,6 @@ def build_fotos_list(progress_win, source_dir, recurse, dest_root):
         foto_list.append(info)
         file.close()
         c = c + 1
-
-    progress_win.stop_now()
+    if progress_win:
+        progress_win.stop_now()
     return (foto_list, dest_dir_set)
