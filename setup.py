@@ -15,5 +15,5 @@ setup(
         "Programming Language :: Python :: 3", 
         "Operating System :: Windows 10",
     ],
-    entry_points={"console_scripts": ["fotocopy.__main__:main"]}
+    entry_points={"console_scripts": ["fotofiler.__main__:main"]}
 )

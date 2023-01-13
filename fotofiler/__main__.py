@@ -16,7 +16,7 @@
 
 import argparse
 import sys
-from fotocopy.wizard import wizard
+from fotofiler.wizard import wizard
 
 
 # MAIN
@@ -27,7 +27,12 @@ def main():
     parser.add_argument('--wizard', 
                         action='store_true',
                         help='Start in wizard mode with GUI')
-
+    parser.add_argument('--source', nargs=1,
+                        help='Source path where to look for files')
+    parser.add_argument('--destination', nargs=1,
+                        help='Path to where subdirectories are created for copied files')
+    parser.add_argument('--pattern', nargs=1,
+                        help='Pattern to match source files. Default=*.*; could be *.jpg for example')
     args = parser.parse_args()
     if args.wizard or len(sys.argv) == 1:
         print('Starting wizard (use -h for help about other options)')

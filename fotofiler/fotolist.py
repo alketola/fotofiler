@@ -2,9 +2,9 @@ import os
 import glob
 import math
 
-from fotocopy.fotoexif import get_datetime, get_y_ym_dirname_from_datetime
+from fotofiler.fotoexif import get_datetime, get_y_ym_dirname_from_datetime
 
-from fotocopy.fotoinfo import FotoInfo
+from fotofiler.fotoinfo import FotoInfo
 
 def build_fotos_list(progress_win, source_dir, recurse, dest_root):
     """

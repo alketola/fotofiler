@@ -21,14 +21,14 @@ import easygui
 import pprint
 from pprint import pprint
 
-import fotocopy.fotoinfo
-from fotocopy.fotoinfo import FotoInfo
-import fotocopy.fotoexif
-from fotocopy.fotoexif import *
-import fotocopy.progress_window
-from fotocopy.progress_window import *
-from fotocopy.fotolist import build_fotos_list
-import fotocopy.fileutil
+import fotofiler.fotoinfo
+from fotofiler.fotoinfo import FotoInfo
+import fotofiler.fotoexif
+from fotofiler.fotoexif import *
+import fotofiler.progress_window
+from fotofiler.progress_window import *
+from fotofiler.fotolist import build_fotos_list
+import fotofiler.fileutil
 
 def wizard():
     """ THE INTERACTIVE WIZARD HERE
@@ -59,7 +59,7 @@ def wizard():
     source_dir = easygui.diropenbox(title="Please input source folder of photos")
     if source_dir is None:
         print("No source folder selected, exiting")
-        quit(1)
+        return(1)
     else:
         print("Source dir",source_dir)
 
@@ -72,7 +72,7 @@ def wizard():
 
     if dest_root is None:
         print("No destination folder selected, exiting")
-        quit(2)
+        return(2)
     else:
         print("Destination folder",dest_root)
 
@@ -121,7 +121,7 @@ def wizard():
 
     if not go_copy:
         print("Cancelled.")
-        quit()
+        return()
 
     # Create new Tkinter window for progress info
     pwin = progress_window()
@@ -138,7 +138,7 @@ def wizard():
 ##            pwin.nudge()
 ##        os.makedirs(dest_root+d, exist_ok=True)
 ##        counter = counter + 1
-    fotocopy.fileutil.make_dirs(dest_root, dest_dir_set, pwin.nudge)
+    fotofiler.fileutil.make_dirs(dest_root, dest_dir_set, pwin.nudge)
     
     pwin.reset_progress()
 
@@ -161,7 +161,7 @@ def wizard():
 ##            
 ##        if (copied_count+failed_count) % 79 == 0 :
 ##            print("",flush=True)
-    copied_count, failed_count = fotocopy.fileutil.copy_files(fotos_list, progress_callback=pwin.nudge)
+    copied_count, failed_count = fotofiler.fileutil.copy_files(fotos_list, progress_callback=pwin.nudge)
     pwin.stop_now()
 
     message = "Copying Finished!\n" + f"Copied {copied_count} of {len(fotos_list)}"
