@@ -53,13 +53,12 @@ def wizard():
                    Other files go with the older filesystem date.
 
                 """
-    easygui.msgbox(welcome_msg,"photoco.py by Antti Ketola 2022 version {version}")
+    easygui.msgbox(welcome_msg,"fotofiler by Antti Ketola 2022 version {version}")
 
     # Ask source folder, from where files are copied
     source_dir = easygui.diropenbox(title="Please input source folder of photos")
     if source_dir is None:
-        print("No source folder selected, exiting")
-        return(1)
+        sys.exit("No source folder selected, exiting")
     else:
         print("Source dir",source_dir)
 
@@ -71,8 +70,7 @@ def wizard():
                                        default="C:/")
 
     if dest_root is None:
-        print("No destination folder selected, exiting")
-        return(2)
+        sys.exit("No destination folder selected, exiting")
     else:
         print("Destination folder",dest_root)
 
@@ -119,9 +117,8 @@ def wizard():
 
     go_copy = easygui.ccbox(message, title)
 
-    if not go_copy:
-        print("Cancelled.")
-        return()
+    if not go_copy:        
+        sys.exit("Cancelled.")
 
     # Create new Tkinter window for progress info
     pwin = progress_window()
