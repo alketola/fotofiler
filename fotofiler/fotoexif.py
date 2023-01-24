@@ -1,5 +1,6 @@
 import os
 import sys
+
 import exifread
 from datetime import datetime
 from dateutil.parser import parse
@@ -8,7 +9,7 @@ from pathlib import Path
 
 def dump_exif(path_name):
     """ Open image file and print EXIF tags and their values
-
+    
     >>> dump_exif('./test/assets/EXIFTEST2.JPG')
     Key: Image ExifOffset, Value: 26
     Key: EXIF DateTimeDigitized, Value: 2022:11:16 01:26:18
@@ -22,22 +23,24 @@ def dump_exif(path_name):
     ##>>> dump_exif('./test/assets/txt.txt') yields nothing but error: File format not recognized.
     
     # Open image file for reading (must be in binary mode)
-    try:
-        f = open(path_name, 'rb')
+    _file=None
+    # try:
+    _file = open(path_name, 'rb')
 
         # Return Exif tags
-        tags = exifread.process_file(f)
-        for tag in tags.keys():
-##            if tag not in ('JPEGThumbnail',
+    _tags = exifread.process_file(_file)
+    for tag in _tags.keys():
+##           if tag not in ('JPEGThumbnail',
 ##                           'TIFFThumbnail',
 ##                           'Filename',
 ##                           'EXIF MakerNote'):
-                print("Key: %s, Value: %s" % (tag, tags[tag]))
-    except Exception as e:
-        print(f"dump_exif({path_name}) hit by exception {e}")
+                print(f"Key: {tag}, Value: {_tags[tag]}")
+    # except Exception as e:
+    #     print(f"dump_exif({path_name}) hit by exception {e}")
                 
-    finally:
-        f.close()
+    # finally:
+    if _file != None:
+            _file.close()
 
 
 def is_datetime_tag(tag):
@@ -220,4 +223,5 @@ def extract_time_and_place_exif_tags(file_handle):
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+    print("ran tests.")
 

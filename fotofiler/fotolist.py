@@ -1,8 +1,13 @@
 import os
 import glob
 import math
+from typing import List
 
-from fotofiler.fotoexif import get_datetime, get_y_ym_dirname_from_datetime
+#import fotofiler.fotoexif as fotoexif
+#import fotofiler.fotoinfo as fotoinfo
+from fotofiler.fotoexif import get_datetime,\
+                               get_y_ym_dirname_from_datetime,\
+                               extract_time_and_place_exif_tags
 
 from fotofiler.fotoinfo import FotoInfo
 
@@ -62,3 +67,46 @@ def build_fotos_list(progress_win, source_dir, recurse, dest_root):
     if progress_win:
         progress_win.stop_now()
     return (foto_list, dest_dir_set)
+
+def get_metadatas(source : os.PathLike, recurse : bool) -> List[FotoInfo]:
+    """ Dig metadata from all files at source
+    """
+
+    foto_list = []
+    globlist = list(glob.iglob(source, recursive=recurse))
+
+    file : file
+    for filename in globlist:
+        try:
+            file=open(filename, 'rb')
+            datum=get_datetime(file)
+            info=FotoInfo(filename,
+                          datum,
+                          None,
+                          None,
+                          None
+                      )
+            exif = extract_time_and_place_exif_tags(file)
+            info.set_exif_gps_coord(
+                exif['GPS GPSLongitude'],
+                exif['GPS GPSLongitudeRef'],
+                exif['GPS GPSLatitude'],
+                exif["GPS GPSLatitudeRef"])
+            foto_list.append(info)
+
+        except Exception as e:
+            print(e)
+
+        finally:
+            file.close()
+
+    return foto_list
+# 'GPS GPSLongitude',
+# 'GPS GPSLatitudeRef',
+# 'GPS GPSDate',
+# 'GPS GPSTimeStamp',
+# 'GPS GPSAltitudeRef',
+# 'GPS GPSLongitudeRef',
+# 'GPS GPSLatitude',
+# 'Image GPSInfo'
+

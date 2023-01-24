@@ -32,7 +32,7 @@ def copy_files(fotos_list, progress_callback=None):
             if copied_count % nud == 0:
                 progress_callback()
         try :
-                shutil.copy2(f.source_path,f.full_dest_path)
+                shutil.copy2(f.source_path,f.full_dest_path, follow_symlinks=False)
                 copied_count = copied_count + 1
         except Exception as e:
             failed_count = failed_count + 1
