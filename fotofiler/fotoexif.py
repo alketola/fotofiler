@@ -1,5 +1,5 @@
 import os
-import sys
+import logging
 import exifread
 from datetime import datetime
 from dateutil.parser import parse
@@ -20,7 +20,7 @@ def dump_exif(path_name):
     >>> dump_exif('./test/assets/RED_IMAGE_20201023.jpg')    
     """
     ##>>> dump_exif('./test/assets/txt.txt') yields nothing but error: File format not recognized.
-    
+
     # Open image file for reading (must be in binary mode)
     try:
         f = open(path_name, 'rb')
@@ -28,14 +28,14 @@ def dump_exif(path_name):
         # Return Exif tags
         tags = exifread.process_file(f)
         for tag in tags.keys():
-##            if tag not in ('JPEGThumbnail',
-##                           'TIFFThumbnail',
-##                           'Filename',
-##                           'EXIF MakerNote'):
-                print("Key: %s, Value: %s" % (tag, tags[tag]))
+            ##            if tag not in ('JPEGThumbnail',
+            ##                           'TIFFThumbnail',
+            ##                           'Filename',
+            ##                           'EXIF MakerNote'):
+            print("Key: %s, Value: %s" % (tag, tags[tag]))
     except Exception as e:
         print(f"dump_exif({path_name}) hit by exception {e}")
-                
+
     finally:
         f.close()
 
@@ -89,72 +89,78 @@ def get_datetime(file_handle):
     datetime.datetime(2022, 11, 16, 1, 57, 13)
     >>> fhandle.close()
     >>>
-    """   
+    """
 
     exif_tag_list = []
-        
+
     my_date_time = None
     my_date_time_str = ""
-    
+
     # Find file name
     filename = file_handle.name
     basename = os.path.basename(filename)
-    
+
     # Find file type
     suf = Path(filename).suffix
 
-    if suf in ['.jpg','.JPG','.tif','.TIF','.wav','.WAV','.jpeg','.JPEG','.tiff','.TIFF']:
-    # Go through EXIF tags, in the types above
+    if suf in ['.jpg', '.JPG', '.tif', '.TIF', '.wav', '.WAV', '.jpeg', '.JPEG', '.tiff', '.TIFF']:
+        # Go through EXIF tags, in the types above
         tags = exifread.process_file(file_handle, details=False)
         datetime_original_found = False
+        my_date_time_str = None
         try:
             for tag in tags.keys():
                 if 'DateTime' in tag:
                     my_date_time_str = (tags[tag]).values
-                    my_date_time = datetime.strptime(my_date_time_str,'%Y:%m:%d %H:%M:%S')
-                    if 'DateTimeOriginal' in tag:                
-                        # print('EXIF DateTimeOrginal: ',my_date_time_str)
-                        
-                        datetime_original_found = True            
+                    if my_date_time_str[11:13] == '24':
+                        # This fix allows exif to have erroneous hours '24' to be interpreted as '00' hours
+                        # '24' in hours would raise exception datetime.strptime()
+                        my_date_time_str = my_date_time_str[:11] + '00' + my_date_time_str[13:]
+                        logging.debug(f"Fixed 24h -> 00h Filename: {filename} datetime string:\'{my_date_time_str}\'")
+
+                    my_date_time = datetime.strptime(my_date_time_str, '%Y:%m:%d %H:%M:%S')
+                    if 'DateTimeOriginal' in tag:
+                        # print('EXIF DateTimeOriginal: ',my_date_time_str)
+
+                        datetime_original_found = True
                     else:
                         pass
                         # print("EXIF Datetime: {t}",tag,my_date_time_str)
-                        
+
                 if datetime_original_found:
                     break
         except Exception as e:
-            print("EXIF tags processing exception:",e)
+            print("EXIF tags processing exception:", e)
 
     # if no date in filename, then fall back to file properties time. Take oldest of creation or modification date.
-    if my_date_time == None :    
+    if my_date_time == None:
         try:
             # smallest (earliest) of the two possible (not considering last access time, no way)            
             os_time_c = os.path.getctime(file_handle.name)
-            os_time_m = os.path.getmtime(file_handle.name)  
+            os_time_m = os.path.getmtime(file_handle.name)
             if os_time_c < os_time_m:
                 os_time = os_time_c
             else:
-                os_time = os_time_m                
+                os_time = os_time_m
         except Exception as e:
-            print("getctime / getmtime: Caught exception:",e)
+            print("getctime / getmtime: Caught exception:", e)
             print("Fall back to Epoch!")
-            os_time = 0 # Fall back to Epoch if nothing was found, so you will find date and dirs for 1970-01-01
+            os_time = 0  # Fall back to Epoch if nothing was found, so you will find date and dirs for 1970-01-01
 
-        try:    
+        try:
             os_time_formatted = datetime.fromtimestamp(os_time).strftime('%Y-%m-%d %H:%M:%S')
             # print("OS time formatted:", os_time_formatted)
             my_date_time_str = os_time_formatted
-            my_date_time = datetime.strptime(my_date_time_str,'%Y-%m-%d %H:%M:%S')
+            my_date_time = datetime.strptime(my_date_time_str, '%Y-%m-%d %H:%M:%S')
         except Exception as e:
-            print("time formatting: Caught exception:",e)
+            print("time formatting: Caught exception:", e)
             print("Fall back to Epoch!")
-            os_time = 0 # Fall back to Epoch if nothing was found, so you will find date and dirs for 1970-01-01
+            os_time = 0  # Fall back to Epoch if nothing was found, so you will find date and dirs for 1970-01-01
             os_time_formatted = "1970-01-01 00:00:01"
-            my_date_time = datetime(1970,1,1,0,0,1)
-
+            my_date_time = datetime(1970, 1, 1, 0, 0, 1)
 
     # No EXIF datetime found, try to find date in filename
-    if my_date_time == None :
+    if my_date_time == None:
         # print("No EXIF dateTime found")
         try:
             my_date_time = parse(
@@ -166,16 +172,16 @@ def get_datetime(file_handle):
             pass
             # print("Filename: Caught exception:",e)
 
-            
-    if my_date_time == None :
+    if my_date_time == None:
         print('\tUnlikely ERROR: Photo date not found ')
-    
+
     return my_date_time
 
-def get_y_ym_dirname_from_datetime( dt ):
-    year=dt.year
-    month=dt.month
-    return "/{:04d}/{:04d}-{:02d}".format(year,year,month)
+
+def get_y_ym_dirname_from_datetime(dt):
+    year = dt.year
+    month = dt.month
+    return "/{:04d}/{:04d}-{:02d}".format(year, year, month)
 
 
 def make_datetime(date_string):
@@ -187,8 +193,9 @@ def make_datetime(date_string):
     datetime.datetime(2022, 11, 16, 1, 2)
 
     """
-    
+
     return parse(date_string)
+
 
 # datetime.strptime(datestring, '%Y:%m:%d %H:%M:%S')
 
@@ -199,25 +206,25 @@ def extract_time_and_place_exif_tags(file_handle):
         # f = open(path_name, 'rb')
     '''
     __exif_tag_list = []
-        
+
     __tags = exifread.process_file(file_handle, details=False)
     for tag in __tags.keys():
-        if tag in ( 'GPS GPSLongitude',
-                    'GPS GPSLatitudeRef',
-                    'GPS GPSDate',
-                    'GPS GPSTimeStamp',
-                    'GPS GPSAltitudeRef',
-                    'GPS GPSLongitudeRef',
-                    'GPS GPSLatitude',
-                    'Image GPSInfo'
+        if tag in ('GPS GPSLongitude',
+                   'GPS GPSLatitudeRef',
+                   'GPS GPSDate',
+                   'GPS GPSTimeStamp',
+                   'GPS GPSAltitudeRef',
+                   'GPS GPSLongitudeRef',
+                   'GPS GPSLatitude',
+                   'Image GPSInfo'
                    ):
             __exif_tag_list.append((tag, __tags[tag]))
             # # print("Key: %s, Value: %s" % (tag, __tags[tag]))
-                        
+
     return dict(__exif_tag_list)
-            
+
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
 
+    doctest.testmod()
