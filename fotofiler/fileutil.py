@@ -23,6 +23,12 @@ def make_dirs(dest_root, dest_dir_set, progess_callback=None):
         counter = counter + 1    
 
 def copy_files(fotos_list, progress_callback=None):
+    """ Copies files in fotos list; each item contains
+        foto.source_path (incl.name)
+        foto.full_dest_path (if it's a dir the original name is preserved)
+        shutil.copy2 preserves as much metadata as possible
+    """
+
     copied_count=0
     failed_count=0
     foto_count = len(fotos_list)
