@@ -65,24 +65,25 @@ class FotoInfo:
         return (self.gps_date, self.gps_timestamp)
 
 
-    def get_gps_coord_float():
-        """ Return from GPS coordinates as a tuple of decimal numbers """
+    def get_gps_coord_float(self):
+        """ Return from GPS coordinates as a tuple of decimal numbers 
+            (longitude_d, latitude_d)
+
+            returns None, if something goes wrong
+        """
         
         try:
             longsec = eval(self.gps_longitude[2])/3600
-        except:
-            longsec = 0.0
-
-        try:
             latsec = eval(self.gps_latitude[2])/3600
+            longitude_d = self.gps_longitude[0]+ self.gps_longitude[1]/60 + longsec
+            latitude_d = self.gps_latitude[0]+ self.gps_latitude[1]/60 + latsec
         except:
-            latsec = 0.0
-        try:
-            longitude = self.gps_longitude[0]+ self.gps_longitude[1]/60 + longsec
-        except:
-            return (0.0,0.0)
+            return None
+
+        return (longitude_d, latitude_d)
 
     
 if __name__ == '__main__':
   import doctest
   doctest.testmod()
+  print("ran doctests")
