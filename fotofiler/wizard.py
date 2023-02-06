@@ -15,7 +15,7 @@
 # 9. Execute commands
 
 import os
-#import shutil
+from .version import current_version
 import tkinter as tk
 import easygui
 import pprint
@@ -53,7 +53,7 @@ def wizard():
                    Other files go with the older filesystem date.
 
                 """
-    easygui.msgbox(welcome_msg,"fotofiler by Antti Ketola 2022 version {version}")
+    easygui.msgbox(welcome_msg,f"fotofiler by Antti Ketola 2022 version {current_version}")
 
     # Ask source folder, from where files are copied
     source_dir = easygui.diropenbox(title="Please input source folder of photos")

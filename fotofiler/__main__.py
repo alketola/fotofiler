@@ -19,6 +19,7 @@ import sys
 import logging
 from fotofiler.wizard import wizard
 import fotofiler.nongui 
+import version
 
 
 # MAIN
@@ -51,7 +52,8 @@ def main():
         log_level='DEBUG'
     else:
         log_level = None
-
+    if not args.quiet:
+        print(f"Fotofiler version {version.current_version}")
     logging.basicConfig(level=log_level)
     if args.wizard or len(sys.argv) == 1:
         print('No arguments, starting wizard (use -h for help about other options)')
